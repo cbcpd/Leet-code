@@ -45,3 +45,4 @@ class Solution:
         # Memoize the result as the current suffix sum minus the opponent's best outcome
         memo[curr_index][max_till_now] = suffix_sum[curr_index] - res
         return memo[curr_index][max_till_now]
+        
