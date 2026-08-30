@@ -8,3 +8,4 @@ class Solution:
         return min(
             r + 1, n - l, l + 1 + n - r
         )  # Calculate the minimum number of deletions in three cases
+        
