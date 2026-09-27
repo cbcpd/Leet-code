@@ -16,4 +16,3 @@ class Solution:
                 # Append non-parenthesis characters to the processed list
                 result.append(current_char)
         return "".join(result)
-        
