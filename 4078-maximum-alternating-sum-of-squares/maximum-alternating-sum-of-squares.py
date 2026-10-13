@@ -5,3 +5,4 @@ class Solution:
             nums[i] *= nums[i]
         nums.sort()
         return -sum(nums[: n // 2]) + sum(nums[n // 2 :])
+        
