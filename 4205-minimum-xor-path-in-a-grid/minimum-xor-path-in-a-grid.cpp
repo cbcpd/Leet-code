@@ -1,27 +1,57 @@
 class Solution {
 public:
     int minCost(vector<vector<int>>& grid) {
-        int m=grid.size(),n=grid[0].size();
-        int dp[m][n][1024];
-        // dp[i][j][k]=1 means there exist a path from (0,0) -> (i,j) such that the bitwise XOR value of all numbers along the path is exactly = k
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                for(int k=0;k<1024;k++) dp[i][j][k]=-1;
-            }
-        }
-        dp[0][0][grid[0][0]]=1;
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                for(int k=0;k<1024;k++){
-                    if(i>=1 && dp[i-1][j][k]!=-1) dp[i][j][k^grid[i][j]]=1;
-                    if(j>=1 && dp[i][j-1][k]!=-1) dp[i][j][k^grid[i][j]]=1;
+        int n = grid.size(); //rows
+        int m = grid[0].size(); //columns
+
+        //2d minimum sum -> dp point but here
+        /*
+        xor -> 
+        (2)   
+        (5)  =>> 2
+
+        if the next element is 7 => 2^7 = 5
+        5 ^ 7 = 2
+        */
+
+        /*
+        2^10 = 1024 
+        1023 = 11111111...
+        */
+        int maxi = 1024;
+        vector<vector<vector<bool>>>dp(n,vector<vector<bool>>(m,vector<bool>(maxi,false)));
+
+        dp[0][0][grid[0][0]]=true;
+        //column initialization
+        for(int i=1;i<n;i++){
+            for(int x=0;x<maxi;x++){
+                if(dp[i-1][0][x]){
+                    dp[i][0][x^grid[i][0]]=true;
                 }
             }
         }
-        for(int i=0;i<1024;i++){
-            if(dp[m-1][n-1][i]!=-1) return i;
+        //row initialization
+        for(int i=1;i<m;i++){
+            for(int x=0;x<maxi;x++){
+                if(dp[0][i-1][x]){
+                    dp[0][i][x^grid[0][i]]=true;
+                }
+            }
         }
-        assert(false);
+        //dp intialization (1,1) -> (n-1,m-1)
+        for(int i=1;i<n;i++){
+            for(int j=1;j<m;j++){
+                for(int x=0;x<maxi;x++){
+                    if(dp[i-1][j][x] || dp[i][j-1][x]){
+                        dp[i][j][x^grid[i][j]]=true;
+                    }
+                }
+            }
+        }
+
+        for(int x=0;x<maxi;x++){
+            if(dp[n-1][m-1][x]) return x; 
+        }
         return -1;
     }
 };
