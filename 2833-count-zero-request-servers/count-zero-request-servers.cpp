@@ -1,0 +1,45 @@
+class Solution {
+public:
+    vector<int> countServers(int n, vector<vector<int>>& logs, int x, vector<int>& queries) {
+        // pair queries with indexes
+        vector<pair<int,int>> sortedQueries;
+        for(int i=0; i< queries.size(); i++)
+            sortedQueries.push_back({queries[i],i});
+        
+        // sort queries and logs array based on time in ascending order
+        sort(sortedQueries.begin(), sortedQueries.end());
+        sort(logs.begin(), logs.end(), [](const auto &a, const auto &b){ 
+                                            return a[1] < b[1];
+                                         });
+
+        // process each query range using sliding window
+        vector<int> ans(queries.size(),0);
+        vector<int> mp(n+1,0);              // to update frequency of each server access
+        int left = 0, right = 0;            // sliding window parameters
+        int uniqueServerAccessed = 0;       // Unique servers accessed in this window
+        for(auto &it : sortedQueries) {
+            int time = it.first;
+            int index = it.second;
+            // expand right side
+            while(right < logs.size() && logs[right][1] <= time){
+                // check if server accessed first time
+                if(mp[logs[right][0]] == 0)
+                    uniqueServerAccessed++;
+                // update server access frequency
+                mp[logs[right][0]]++;
+                right++;
+            }
+            // shrink left side
+            while(left < logs.size() && logs[left][1] < time - x){
+                // check if server was only accessed outside window
+                if(mp[logs[left][0]] == 1)
+                    uniqueServerAccessed--;
+                // update server access frequency
+                mp[logs[left][0]]--;
+                left++;
+            }
+            ans[index] = n - uniqueServerAccessed;      // store servers not accessed in this window
+        }
+        return ans;   
+    }
+};
