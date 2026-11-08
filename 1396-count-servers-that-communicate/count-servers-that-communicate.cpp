@@ -1,44 +1,28 @@
+
 class Solution {
 public:
     int countServers(vector<vector<int>>& grid) {
-        int m = grid.size(), n = grid[0].size();
-        int resultServers = 0;
+        int m=grid.size();
+        int n=grid[0].size();
+        vector<int> row_count(m,0);
+        vector<int> col_count(n,0);
 
-        // Traverse through the grid
-        for (int row = 0; row < m; ++row) {
-            for (int col = 0; col < n; ++col) {
-                if (grid[row][col] == 1) {
-                    bool canCommunicate = false;
-
-                    // Check for communication in the same row
-                    for (int otherCol = 0; otherCol < n; ++otherCol) {
-                        if (otherCol != col && grid[row][otherCol] == 1) {
-                            canCommunicate = true;
-                            break;
-                        }
-                    }
-
-                    // If a server was found in the same row, increment resultServers
-                    if (canCommunicate) {
-                        resultServers++;
-                    } else {
-                        // Check for communication in the same column
-                        for (int otherRow = 0; otherRow < m; ++otherRow) {
-                            if (otherRow != row && grid[otherRow][col] == 1) {
-                                canCommunicate = true;
-                                break;
-                            }
-                        }
-
-                        // If a server was found in the same column, increment resultServers
-                        if (canCommunicate) {
-                            resultServers++;
-                        }
-                    }
+        //Step-1: Count frequency of each row & col
+        int total_servers=0;
+        for(int i=0;i<m;++i)
+            for(int j=0;j<n;++j)
+                if(grid[i][j]){
+                    row_count[i]++;
+                    col_count[j]++;
+                    total_servers++;
                 }
-            }
-        }
-
-        return resultServers;
+        
+        //Step-2: Check non-communicating servers
+        for(int i=0;i<m;++i)
+            for(int j=0;j<n;++j)
+                if(grid[i][j] and (row_count[i]==1 and col_count[j]==1))
+                    total_servers--;
+        
+        return total_servers;
     }
 };
